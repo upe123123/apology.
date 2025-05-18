@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Heyyy... 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Pacifico', cursive;
+      background: linear-gradient(145deg, #ffe6f2, #e0f7ff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      text-align: center;
+      color: #444;
+      cursor: url('https://cur.cursors-4u.net/cursors/cur-9/cur839.cur'), auto;
+    }
+    .container {
+      background: #fff0f5;
+      border-radius: 2rem;
+      padding: 2rem;
+      box-shadow: 0 0 25px rgba(255, 192, 203, 0.7);
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+      z-index: 2;
+    }
+    .heart-btn {
+      background: none;
+      border: none;
+      font-size: 3rem;
+      cursor: pointer;
+      animation: float 2s infinite ease-in-out;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      margin: 0.5rem;
+      font-size: 1rem;
+      border-radius: 2rem;
+      border: none;
+      cursor: pointer;
+      background: #ffcce0;
+      transition: all 0.2s ease;
+    }
+    .btn:hover {
+      background: #ffb3cc;
+    }
+    .btn.yes {
+      animation: bounce 1s infinite;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-5px); }
+    }
+    .big-text {
+      font-size: 1.5rem;
+      margin: 1rem 0;
+    }
+    .bubble-heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center;
+      background-size: cover;
+      pointer-events: none;
+      animation: floatUp 2s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-100px) scale(0.5); opacity: 0; }
+    }
+    .fireworks {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+    .memory-box {
+      margin-top: 1rem;
+      background: #ffe6f2;
+      padding: 1rem;
+      border-radius: 1rem;
+      font-size: 1rem;
+      animation: fadeIn 2s ease forwards;
+    }
+    .carousel-item.hidden {
+      display: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .typing {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid pink;
+      animation: typing 3s steps(30, end), blink .75s step-end infinite;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+    .cat-gif {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 80px;
+      z-index: 5;
+    }
+    .music-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+    .progress-meter {
+      margin-top: 1rem;
+    }
+    .progress-bar {
+      width: 0%;
+      height: 10px;
+      background: pink;
+      border-radius: 10px;
+      transition: width 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <div class="music-toggle">
+    <label><input type="checkbox" id="musicToggle" /> Music 🎶</label>
+  </div>
+  <img
+    id="catImage"
+    src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"
+    alt="Cat gif"
+    class="cat-gif"
+  />
+  <div class="container" id="main">
+    <p class="typing">Heyyy 💕 I'm really sorry to disturb... Can u just click here?</p>
+    <button class="heart-btn" onclick="popHeart()">❤️</button>
+    <div class="memory-box hidden" id="memoryBox">
+      <p>“You mean a lot to me”</p>
+      
+    </div>
+    <div class="progress-meter">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+  </div>
+  <audio id="clickSound" src="https://www.myinstants.com/media/sounds/pop-up-off.mp3"></audio>
+  <audio id="bgMusic" loop>
+    <source
+      src="https://www.bensound.com/bensound-music/bensound-sunny.mp3"
+      type="audio/mp3"
+    />
+  </audio>
+  <canvas class="fireworks" id="fireworks"></canvas>
+  <script>
+    let main = document.getElementById("main");
+    let clickSound = document.getElementById("clickSound");
+    let musicToggle = document.getElementById("musicToggle");
+    let bgMusic = document.getElementById("bgMusic");
+    let memoryBox = document.getElementById("memoryBox");
+    let progressBar = document.getElementById("progressBar");
+    let catImage = document.getElementById("catImage");
+    let progress = 0;
+
+    const cuteQuestions = [
+      "Can I get u a choco ice cream? 🍫",
+      "What about a kottuee?",
+      "U look cute when u get angry ukk😳",
+      "Want a strawberry ice cream? 🍓",
+      "Ur eyes are soooo pretty 💫",
+      "Secret: I still like you (its not a secret ik)🙈",
+      "Should I bake brownies for you? 🍪",
+      "Pinky promise I'll try 💞",
+      "Just one bobaaaaaa together? 🧋",
+      "Your smile > stars ✨",
+    ];
+
+    const catGifs = [
+      "https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif",
+      "https://media.giphy.com/media/mlvseq9yvZhba/giphy.gif",
+      "https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif",
+      "https://media.giphy.com/media/3oriO0OEd9QIDdllqo/giphy.gif",
+      "https://media.giphy.com/media/kNSeTs31XBZ3G/giphy.gif",
+    ];
+
+    function changeCat(index) {
+      catImage.src = catGifs[index % catGifs.length];
+    }
+
+    musicToggle.addEventListener("change", () => {
+      if (musicToggle.checked) bgMusic.play();
+      else bgMusic.pause();
+    });
+
+    window.onload = () => {
+      setTimeout(() => {
+        if (!musicToggle.checked) {
+          bgMusic.play();
+          musicToggle.checked = true;
+        }
+      }, 2000);
+      startCarousel();
+    };
+
+    function updateProgress() {
+      progress = Math.min(progress + 10, 100);
+      progressBar.style.width = `${progress}%`;
+      if (progress >= 50) memoryBox.classList.remove("hidden");
+    }
+
+    function sprinkleHearts(target) {
+      for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.className = "bubble-heart";
+        heart.style.left = `${Math.random() * window.innerWidth}px`;
+        heart.style.top = `${Math.random() * window.innerHeight}px`;
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2000);
+      }
+    }
+
+    function sendEmailNotification() {
+      fetch("https://formspree.io/f/yourFormID", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: "They said OK!" }),
+      });
+    }
+
+    function popHeart() {
+      clickSound.play();
+      changeCat(1);
+      main.innerHTML = `
+        <p class="big-text">Can I get one single chance? 😫</p>
+        <button class="btn yes" onclick="yesResponse(this)">Yes</button>
+        <button class="btn" onclick="noResponse()">No</button>
+      `;
+    }
+
+    function yesResponse(btn) {
+      clickSound.play();
+      sprinkleHearts(btn);
+      updateProgress();
+      changeCat(2);
+      main.innerHTML = `
+        <p class="big-text">Yayyyyyyyy!!! 🥳💖</p>
+        <p>Thank you so much! You're the sweetest 💗</p>
+        <p>I'll get your favorite ice creammm 🍦✨</p>
+      `;
+      launchFireworks();
+      sendEmailNotification();
+    }
+
+    function noResponse() {
+      clickSound.play();
+      updateProgress();
+      changeCat(3);
+      const question =
+        cuteQuestions[Math.floor(Math.random() * cuteQuestions.length)];
+      main.innerHTML = `
+        <p class="big-text">${question}</p>
+        <button class="btn yes" onclick="yesOk(this)">Okkk ❤️</button>
+        <button class="btn" onclick="noResponse()">No</button>
+      `;
+    }
+
+    function yesOk(btn) {
+      clickSound.play();
+      sprinkleHearts(btn);
+      updateProgress();
+      changeCat(4);
+      main.innerHTML = `
+        <p class="big-text">Awwww thank uuu! 🥰💞</p>
+        <p>I promise I won't bother you much now! 😇</p>
+        <p>I missed you a lot. Like really 💔</p>
+      `;
+      launchFireworks();
+      sendEmailNotification();
+    }
+
+    function launchFireworks() {
+      const canvas = document.getElementById("fireworks");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      let particles = [];
+
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          dx: (Math.random() - 0.5) * 10,
+          dy: (Math.random() - 0.5) * 10,
+          life: 100,
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach((p, i) => {
+          p.x += p.dx;
+          p.y += p.dy;
+          p.life--;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, 105, 180, ${p.life / 100})`;
+          ctx.fill();
+        });
+        particles = particles.filter((p) => p.life > 0);
+        if (particles.length > 0) requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // NEW: Carousel cycling for memoryBox
+    function startCarousel() {
+      const items = document.querySelectorAll(".carousel-item");
+      let index = 0;
+      setInterval(() => {
+        items[index].classList.add("hidden");
+        index = (index + 1) % items.length;
+        items[index].classList.remove("hidden");
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
